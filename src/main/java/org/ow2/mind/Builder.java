@@ -290,7 +290,8 @@ public class Builder  {
 						if (s.contains(".jar")){
 							URL u;
 							try {
-								u = new URL("file://" + s /*+ "!"*/);
+								u = j.toURI().toURL();
+										//new URL("file://" + s /*+ "!"*/);
 								addURL(u);
 							} catch (MalformedURLException e) {
 								e.printStackTrace();

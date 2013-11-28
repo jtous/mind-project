@@ -148,7 +148,10 @@ public class Builder  {
 	private Opt compilerOpt;
 	private Opt linkerOpt;
 	private Opt assemblerOpt;
-
+	private Opt cFlagsOpt;
+	private Opt cppFlagsOpt;
+	private Opt ldFlagsOpt;
+	private Opt asFlagsOpt;
 	/**
 	 * All available properties from project configuration file
 	 */
@@ -163,10 +166,10 @@ public class Builder  {
 	private Prop compilerCommand;
 	private Prop assemblerCommand;
 	private Prop linkerCommand;
-	private Prop asFlags= new Prop("asFlags");
-	private Prop cppFlags= new Prop("cppFlags");
-	private Prop cFlags= new Prop("cFlags");
-	private Prop ldFlags= new Prop("ldFlags");
+	private Prop asFlags;
+	private Prop cppFlags;
+	private Prop cFlags;
+	private Prop ldFlags;
 	private Prop extraOptions= new Prop("extraOptions");
 	
 	/**
@@ -291,7 +294,6 @@ public class Builder  {
 							URL u;
 							try {
 								u = j.toURI().toURL();
-										//new URL("file://" + s /*+ "!"*/);
 								addURL(u);
 							} catch (MalformedURLException e) {
 								e.printStackTrace();
@@ -318,7 +320,11 @@ public class Builder  {
 		treatCompiler();
 		treatLinker();
 		treatAssembler();
-
+		treatCFlags();
+		treatLDFlags();
+		treatASFlags();
+		treatCPPFlags();
+		
 		mindcArgs.append(execOpt);
 		mindcArgs.append(buildDirOpt);
 		mindcArgs.append(srcPathOpt);
@@ -327,7 +333,11 @@ public class Builder  {
 		mindcArgs.append(compilerOpt);
 		mindcArgs.append(linkerOpt);
 		mindcArgs.append(assemblerOpt);
-
+		mindcArgs.append(cFlagsOpt);
+		mindcArgs.append(cppFlagsOpt);
+		mindcArgs.append(asFlagsOpt);
+		mindcArgs.append(ldFlagsOpt);
+		
 		File outputDir = new File(buildDirOpt.value);
 		if (!outputDir.exists())
 			outputDir.mkdirs();		
@@ -347,7 +357,11 @@ public class Builder  {
 		treatLinker();
 		treatAssembler();
 		treatTestSourcePath();
-
+		treatCFlags();
+		treatLDFlags();
+		treatASFlags();
+		treatCPPFlags();
+		
 		mindcArgs.append(testDirOpt);
 		mindcArgs.append(srcPathOpt);
 		mindcArgs.append(depPathOpt);
@@ -357,6 +371,10 @@ public class Builder  {
 		mindcArgs.append(compilerOpt);
 		mindcArgs.append(linkerOpt);
 		mindcArgs.append(assemblerOpt);
+		mindcArgs.append(cFlagsOpt);
+		mindcArgs.append(cppFlagsOpt);
+		mindcArgs.append(asFlagsOpt);
+		mindcArgs.append(ldFlagsOpt);
 		mindcArgs.append(testSrcPathOpt);
 
 		File outputDir = new File(testDirOpt.value);
@@ -435,6 +453,26 @@ public class Builder  {
 	}
 
 	/**
+	 * Set the C flags
+	 */
+	private void treatCFlags()
+	{	
+		cFlags = new Prop("cFlags");
+		cFlags.setValue(prop.getProperty(cFlags.key));
+		cFlagsOpt = new Opt("--c-flags=", cFlags.value);
+	}
+
+	/**
+	 * Set the C preprocessor flags
+	 */
+	private void treatCPPFlags()
+	{	
+		cppFlags = new Prop("cppFlags");
+		cppFlags.setValue(prop.getProperty(cppFlags.key));
+		cppFlagsOpt = new Opt("--cpp-flags=", cppFlags.value);
+	}
+	
+	/**
 	 * Set the linker command
 	 */
 	private void treatLinker()
@@ -445,6 +483,16 @@ public class Builder  {
 	}
 
 	/**
+	 * Set the LD flags
+	 */
+	private void treatLDFlags()
+	{	
+		ldFlags = new Prop("ldFlags");
+		ldFlags.setValue(prop.getProperty(ldFlags.key));
+		ldFlagsOpt = new Opt("--ld-flags=", ldFlags.value);
+	}
+	
+	/**
 	 * Set the assembler command
 	 */
 	private void treatAssembler()
@@ -454,6 +502,17 @@ public class Builder  {
 		assemblerOpt = new Opt("--assembler-command=", assemblerCommand.value);
 	}
 
+
+	/**
+	 * Set the assembler flags
+	 */
+	private void treatASFlags()
+	{	
+		asFlags = new Prop("asFlags");
+		asFlags.setValue(prop.getProperty(asFlags.key));
+		asFlagsOpt = new Opt("--as-flags=", asFlags.value);
+	}
+	
 	/**
 	 * Set the include paths
 	 */
